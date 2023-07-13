@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract EtherealToken is ERC20, Ownable{
+contract Ethereal is ERC20, Ownable{
     // Setting token price - 1 ether
     uint public tokenPrice;
 
