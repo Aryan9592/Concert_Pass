@@ -1,50 +1,61 @@
 import Header from './components/Header';
 import {useState, useEffect} from 'react'
 import { ethers } from 'ethers';
+import { message } from "antd"
+import detectEthereumProvider from '@metamask/detect-provider';
 
 function App() {
   const [account, setAccount] = useState(null)
   const [provider, setProvider] = useState(null)
   const [signer, setSigner] = useState(null)
+  const [messageApi, contextHolder] = message.useMessage()
 
+  const [hasProvider, setHasProvider] = useState(null)
+  const initialState = { accounts: [] }
+  const [wallet, setWallet] = useState(initialState)
 
-  const loadBlockchainData = async () => {
-    // This provider and signer be interacting with our blockchain
-    let _provider, _signer
-    try {
-      if(window.ethereum == null){
-        _provider = ethers.getDefaultProvider()
+  
+  useEffect(() => {
+    const refreshAccounts = (accounts) => {
+      if (accounts.length > 0){
+        updateWallet(accounts)
       } else {
-        _provider = new ethers.BrowserProvider(window.ethereum)
+        setWallet(initialState)
       }
-      _signer = await _provider.getSigner()
-      setProvider(_provider)
-      setSigner(_signer)
-    } catch (error) {
-      console.log("No wallet is Connected!!")
     }
 
-    // affects when you change the account
-    window.ethereum.on('accountsChanged', async () => {
-      const accounts = await window.ethereum.request({ method: 'eth_accounts'})
-      if(accounts.length !== 0){
-        const account = await ethers.getAddress(accounts[0])
-        setAccount(account)
-      }  
-    })
+    const getProvider = async () => {
+      const provider = await detectEthereumProvider({silent: true})
+      setHasProvider(Boolean(provider))
+      if(provider){
+        const accounts = await window.ethereum.request({
+          method: 'eth_accounts',
+        })
+        refreshAccounts(accounts)
+        window.ethereum.on('accountsChanged', refreshAccounts)
+      } else {
+        messageApi.warning("Please Install Metamask!!")
+      }
+    }
     
-    console.log(_signer)
-    // console.log(provider)
-  }
-
-  useEffect(() => {
-    loadBlockchainData()
+    getProvider()
+    return () => {
+      window.ethereum?.removeListener('accountsChanged', refreshAccounts)
+    }
   }, [])
 
+  const updateWallet = async (accounts) => {
+    setWallet({accounts})
+  }
+  
+
   return (
-    <div className="App">
-      <Header account={account} setAccount={setAccount}/>      
-    </div>
+    <>
+      {contextHolder}
+      <div className="App">
+        <Header wallet={wallet} updateWallet={updateWallet}/>     
+      </div>
+    </>
   );
 }
 

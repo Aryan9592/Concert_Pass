@@ -1,21 +1,21 @@
 import React from "react";
 import Logo from "../images/logo.jpg"
-import {ethers} from 'ethers';
 
-export default function Header({account, setAccount}){
-
+export default function Header({wallet, setWallet, updateWallet}){
+    
     const connectHandler = async () => {
-        const accounts = await window.ethereum.request({method: "eth_requestAccounts"})
-        const account = ethers.getAddress(accounts[0])
-        setAccount(account)
+        let accounts = await window.ethereum.request({
+            method: "eth_requestAccounts",
+        })
+        updateWallet(accounts)
     }
 
     return(
         <header>
             <img src={Logo} alt="" width={40}/>
-            {account ? (
+            {wallet.accounts.length > 0 ? (
                 <button>
-                    {account.slice(0, 4) + '...' + account.slice(38, 42)}
+                    {wallet.accounts[0].slice(0, 4) + '...' + wallet.accounts[0].slice(38, 42)}
                 </button>
             ) : (
                 <button onClick={connectHandler}>
