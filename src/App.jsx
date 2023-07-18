@@ -28,6 +28,7 @@ function App() {
 
     const refreshChain = (chainId) => {
       setWallet((wallet) => ({...wallet, chainId}))
+      
     }
 
     const getProvider = async () => {
