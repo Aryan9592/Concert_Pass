@@ -2,13 +2,16 @@ import Header from './components/Header';
 import {useState, useEffect} from 'react'
 import { ethers } from 'ethers';
 import { message } from "antd";
-import { formatBalance, formatChainAsNum } from './utils/info';
+import { formatBalance  } from './utils/info';
 import detectEthereumProvider from '@metamask/detect-provider';
+import Main from './components/Main';
+import Owner from './components/Owner';
 
 function App() {
   const [provider, setProvider] = useState(null)
   const [signer, setSigner] = useState(null)
   const [messageApi, contextHolder] = message.useMessage()
+  const [contract, setContract] = useState(null)
 
   const [hasProvider, setHasProvider] = useState(null)
   const initialState = { accounts: [], balance: "", chainId: "" }
@@ -85,7 +88,9 @@ function App() {
     <>
       {contextHolder}
       <div className="App">
-        <Header wallet={wallet} updateWallet={updateWallet} showError={showError}/>     
+        <Header wallet={wallet} updateWallet={updateWallet} showError={showError}/>  
+        <Main signer={signer} provider={provider} setContract={setContract} formatBalance={formatBalance}/>  
+        <Owner />
       </div>
     </>
   );
