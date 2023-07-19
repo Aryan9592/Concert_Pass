@@ -25,7 +25,7 @@ contract EtherealToken is ERC20, Ownable{
         require(tokenRecord[msg.sender] == false, "You already got a token!!");
         require(msg.value == tokenPrice, "Your wallet doesn't consist of the valid amount for this token");
         tokenRecord[msg.sender] = true;
-        _mint(msg.sender, 1);
+        _mint(msg.sender, 1000000000000000000);
     }
 
     function setMaxSupply(uint _maxSupply) public onlyOwner{

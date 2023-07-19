@@ -6,6 +6,7 @@ import { formatBalance  } from './utils/info';
 import detectEthereumProvider from '@metamask/detect-provider';
 import Main from './components/Main';
 import Owner from './components/Owner';
+import ABI from "./abis/Contract_Abi.json"
 
 function App() {
   const [provider, setProvider] = useState(null)
@@ -18,6 +19,7 @@ function App() {
   const [wallet, setWallet] = useState(initialState)
 
   const error_key = "error"
+  const contractAddress = "0xe147779CF13B8c5b123B7C311d928e2459B37E32"
 
   // This useEffect is for handling metamask accounts thing
   useEffect(() => {
@@ -72,6 +74,8 @@ function App() {
 
     setProvider(provider)
     setSigner(signer)
+    const contract = new ethers.Contract(contractAddress, ABI, signer)
+    setContract(contract)
   }
 
   const showError = (errorMsg) => {
@@ -89,7 +93,8 @@ function App() {
       {contextHolder}
       <div className="App">
         <Header wallet={wallet} updateWallet={updateWallet} showError={showError}/>  
-        <Main signer={signer} provider={provider} setContract={setContract} formatBalance={formatBalance}/>  
+        <Main signer={signer} provider={provider} contract={contract} formatBalance={formatBalance}/>  
+        <p></p>
         <Owner />
       </div>
     </>
