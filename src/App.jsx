@@ -2,7 +2,7 @@ import Header from './components/Header';
 import {useState, useEffect} from 'react'
 import { ethers } from 'ethers';
 import { message } from "antd";
-import { formatBalance  } from './utils/info';
+import { formatBalance, formatDetails } from './utils/info';
 import detectEthereumProvider from '@metamask/detect-provider';
 import Main from './components/Main';
 import Owner from './components/Owner';
@@ -10,12 +10,14 @@ import ABI from "./abis/Contract_Abi.json"
 
 function App() {
   const [provider, setProvider] = useState(null)
-  const [signer, setSigner] = useState(null)
   const [messageApi, contextHolder] = message.useMessage()
   const [contract, setContract] = useState(null)
 
   const [hasProvider, setHasProvider] = useState(null)
   const initialState = { accounts: [], balance: "", chainId: "" }
+  const [details, setDetails] = useState({maxSupply: 0, totalSupply: 0, tokenPrice: 0})
+  console.log(details)
+
   const [wallet, setWallet] = useState(initialState)
 
   const error_key = "error"
@@ -51,7 +53,7 @@ function App() {
       }
     }
     
-    getProvider()
+    getProvider() 
     return () => {
       window.ethereum?.removeListener('accountsChanged', refreshAccounts)
       window.ethereum?.removeListener("chainChanged", refreshChain)
@@ -73,7 +75,6 @@ function App() {
     const signer = await provider.getSigner()
 
     setProvider(provider)
-    setSigner(signer)
     const contract = new ethers.Contract(contractAddress, ABI, signer)
     setContract(contract)
   }
@@ -87,15 +88,30 @@ function App() {
     })
   }
   
+  const loadData = async () => {
+    try{
+      const readContract = new ethers.Contract(contractAddress, ABI, provider)
+      const detail = await readContract.returnState()
+      const newDetails = {
+          maxSupply: formatDetails(detail[0]),
+          totalSupply: formatDetails(detail[1]),
+          tokenPrice: formatBalance(detail[2])
+      }
+      console.log(newDetails)
+      setDetails(newDetails)
+    } 
+    catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <>
       {contextHolder}
       <div className="App">
         <Header wallet={wallet} updateWallet={updateWallet} showError={showError}/>  
-        <Main signer={signer} provider={provider} contract={contract} formatBalance={formatBalance}/>  
-        <p></p>
-        <Owner />
+        <Main contract={contract} details={details}/>  
+        <Owner contract={contract}/>
       </div>
     </>
   );

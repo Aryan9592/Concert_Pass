@@ -3,7 +3,12 @@ export const formatBalance = (rawBalance) => {
     return balance
   }
   
-  export const formatChainAsNum = (chainIdHex) => {
-    const chainIdNum = parseInt(chainIdHex)
-    return chainIdNum
-  }
+export const formatChainAsNum = (chainIdHex) => {
+  const chainIdNum = parseInt(chainIdHex)
+  return chainIdNum
+}
+
+export const formatDetails = (rawBalance) => {
+  const balance = (parseInt(rawBalance) / 1000000000000000000)
+  return balance
+}
