@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-    import { message } from "antd";
+import { message } from "antd";
 import Logo from "../images/logo.jpg"
 
 export default function Header({wallet, updateWallet, showError, loadData}){

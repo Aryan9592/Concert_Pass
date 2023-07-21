@@ -11,6 +11,7 @@ import Config from "./config.json"
 
 function App() {
   const [provider, setProvider] = useState(null)
+
   const [messageApi, contextHolder] = message.useMessage()
   const [contract, setContract] = useState(null)
 
@@ -19,10 +20,11 @@ function App() {
 
   // blockchain data
   const storage = JSON.parse(localStorage.getItem("items"))
-  const [details, setDetails] = useState(storage)
+  const [details, setDetails] = useState(() => storage || [])
   // console.log(details)
 
   const [wallet, setWallet] = useState(initialState)
+  console.log(wallet.accounts.length)
 
   const error_key = "error"
   const contractAddress = Config.contractAddress
@@ -94,21 +96,29 @@ function App() {
   
   const loadData = async () => {
     try{
-      const readContract = new ethers.Contract(contractAddress, ABI, provider)
-      console.log(readContract)
-      const detail = await readContract.returnState()
-      console.log(detail)
-      const newDetails = [
-          formatDetails(detail[0]),
-          formatDetails(detail[1]),
-          formatBalance(detail[2])
-      ]
-      localStorage.setItem("items", JSON.stringify(newDetails))
-      console.log(`New Details: ${newDetails}`)
-      setDetails(newDetails)
+      if (provider){
+        const readContract = new ethers.Contract(contractAddress, ABI, provider)
+        const detail = await readContract.returnState()
+        const newDetails = [
+            formatDetails(detail[0]),
+            formatDetails(detail[1]),
+            formatBalance(detail[2])
+        ]
+        localStorage.setItem("items", JSON.stringify(newDetails))
+        console.log(`New Details: ${newDetails}`)
+        setDetails(newDetails)
+      }
     } 
     catch (error) {
       console.log(error)
+    }
+  }
+
+  const checkToken = async () => {
+    const read = new ethers.Contract(contractAddress, ABI, provider)
+    const answer = await read.tokenRecord(wallet.accounts[0])
+    if (answer) {
+      showError('You already got a token!!')
     }
   }
 
@@ -117,7 +127,7 @@ function App() {
       {contextHolder}
       <div className="App">
         <Header wallet={wallet} updateWallet={updateWallet} showError={showError} loadData={loadData}/>  
-        <Main contract={contract} details={details}/>  
+        {wallet.accounts.length > 0 && <Main contract={contract} details={details} loadData={loadData} showError={showError} checkToken={checkToken}/>}  
         <Owner contract={contract}/>
       </div>
     </>
