@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
     import { message } from "antd";
 import Logo from "../images/logo.jpg"
 
-export default function Header({wallet, updateWallet, showError}){
+export default function Header({wallet, updateWallet, showError, loadData}){
     const [messageApi, contextHolder] = message.useMessage()
     const key = 'updatable'
     const [isConnecting, setIsConnecting] = useState(null)
@@ -16,6 +16,7 @@ export default function Header({wallet, updateWallet, showError}){
         .then((accounts) => {
             setError(false)
             updateWallet(accounts)
+            loadData()
         })
         .catch((error) => {
             setError(true)

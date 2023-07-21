@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import ABI from "../abis/Contract_Abi.json"
 import { formatDetails, formatBalance } from "../utils/info";
+import Config from "../config.json"
 const { ethers } = require("ethers")
 
 export default function Main({contract, details}){
     const tokenValue = ethers.parseEther('0.001')
-    const tokenAddress = "0xe147779CF13B8c5b123B7C311d928e2459B37E32"
-    const tokenSymbol = 'MAG'
-    const tokenDecimals = 18
-    const tokenImage = 'https://image.lexica.art/full_jpg/ca0e04bf-8015-4128-9fb3-d7c4a254ae33'
+    const tokenAddress = Config.contractAddress
+    const tokenSymbol = Config.tokenSymbol
+    const tokenDecimals = Config.tokenDecimals
+    const tokenImage = Config.tokenImage
 
     
     const MintToken = async (event) => {
@@ -52,9 +53,9 @@ export default function Main({contract, details}){
         <>
             <div className="buttons">
                 <button className="Mint" onClick={MintToken}>Mint Token</button>
-                <p>MaxSupply: {details.maxSupply}</p>
-                <p>TotalSupply: {details.totalSupply}</p>
-                <p>TokenPrice: {details.tokenPrice}</p>
+                <p>MaxSupply: {details[0]}</p>
+                <p>TotalSupply: {details[1]}</p>
+                <p>TokenPrice: {details[2]}</p>
             </div>
         </>
     )

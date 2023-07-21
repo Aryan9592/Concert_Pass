@@ -7,6 +7,7 @@ import detectEthereumProvider from '@metamask/detect-provider';
 import Main from './components/Main';
 import Owner from './components/Owner';
 import ABI from "./abis/Contract_Abi.json"
+import Config from "./config.json"
 
 function App() {
   const [provider, setProvider] = useState(null)
@@ -15,13 +16,16 @@ function App() {
 
   const [hasProvider, setHasProvider] = useState(null)
   const initialState = { accounts: [], balance: "", chainId: "" }
-  const [details, setDetails] = useState({maxSupply: 0, totalSupply: 0, tokenPrice: 0})
-  console.log(details)
+
+  // blockchain data
+  const storage = JSON.parse(localStorage.getItem("items"))
+  const [details, setDetails] = useState(storage)
+  // console.log(details)
 
   const [wallet, setWallet] = useState(initialState)
 
   const error_key = "error"
-  const contractAddress = "0xe147779CF13B8c5b123B7C311d928e2459B37E32"
+  const contractAddress = Config.contractAddress
 
   // This useEffect is for handling metamask accounts thing
   useEffect(() => {
@@ -91,13 +95,16 @@ function App() {
   const loadData = async () => {
     try{
       const readContract = new ethers.Contract(contractAddress, ABI, provider)
+      console.log(readContract)
       const detail = await readContract.returnState()
-      const newDetails = {
-          maxSupply: formatDetails(detail[0]),
-          totalSupply: formatDetails(detail[1]),
-          tokenPrice: formatBalance(detail[2])
-      }
-      console.log(newDetails)
+      console.log(detail)
+      const newDetails = [
+          formatDetails(detail[0]),
+          formatDetails(detail[1]),
+          formatBalance(detail[2])
+      ]
+      localStorage.setItem("items", JSON.stringify(newDetails))
+      console.log(`New Details: ${newDetails}`)
       setDetails(newDetails)
     } 
     catch (error) {
@@ -109,7 +116,7 @@ function App() {
     <>
       {contextHolder}
       <div className="App">
-        <Header wallet={wallet} updateWallet={updateWallet} showError={showError}/>  
+        <Header wallet={wallet} updateWallet={updateWallet} showError={showError} loadData={loadData}/>  
         <Main contract={contract} details={details}/>  
         <Owner contract={contract}/>
       </div>
