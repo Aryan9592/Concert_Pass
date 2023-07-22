@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import ABI from "../abis/Contract_Abi.json"
 // import { formatDetails, formatBalance } from "../utils/info";
 import Config from "../config.json"
 import { message } from "antd";
@@ -21,8 +20,8 @@ export default function Main({contract, details, loadData, showError, checkToken
     const MintToken = async (event) => {
         event.preventDefault()
         try {
-            setIsMinting(true)
             const mint = await contract.mint({value: tokenValue})
+            setIsMinting(true)
             await mint.wait()
             setIsMinting(false)
             loadData()
@@ -67,7 +66,7 @@ export default function Main({contract, details, loadData, showError, checkToken
                     key,
                     type: "loading",
                     content: "Minting Token...",
-                    duration: 3
+                    duration: 5
                 })
             }
             else if (isMinting === false && !error){
@@ -89,7 +88,7 @@ export default function Main({contract, details, loadData, showError, checkToken
 
     return(
         <>
-            {/* {contextHolder} */}
+            {contextHolder}
             <div className="buttons">
                 <button className="Mint" onClick={MintToken}>Mint Token</button>
                 <p>MaxSupply: {details[0]}</p>

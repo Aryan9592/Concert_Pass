@@ -25,4 +25,6 @@ main().catch((error) => {
   process.exitCode = 1;
 });
 
-// npx hardhat run ./scripts/deploy.js --network goerli
+// npx hardhat run ./scripts/deploy.js --network sepolia
+
+// npx hardhat verify --network sepolia [contract address]

@@ -24,7 +24,6 @@ function App() {
   // console.log(details)
 
   const [wallet, setWallet] = useState(initialState)
-  console.log(wallet.accounts.length)
 
   const error_key = "error"
   const contractAddress = Config.contractAddress
@@ -128,7 +127,7 @@ function App() {
       <div className="App">
         <Header wallet={wallet} updateWallet={updateWallet} showError={showError} loadData={loadData}/>  
         {wallet.accounts.length > 0 && <Main contract={contract} details={details} loadData={loadData} showError={showError} checkToken={checkToken}/>}  
-        <Owner contract={contract}/>
+        <Owner contract={contract} loadData={loadData}/>
       </div>
     </>
   );

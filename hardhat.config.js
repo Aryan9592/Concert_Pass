@@ -6,7 +6,7 @@ require("dotenv").config();
 module.exports = {
   solidity: "0.8.18",
   networks: {
-    goerli: {
+    sepolia: {
       url: process.env.ALCHEMY_RPC_URL,
       accounts: [`0x${process.env.WALLET_PRIVATE_KEY}`],
     },

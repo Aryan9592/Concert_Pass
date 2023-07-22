@@ -15,7 +15,7 @@ contract EtherealToken is ERC20, Ownable{
     // Mapping checks whether the user already owns a token or not..
     mapping(address => bool) public tokenRecord;
 
-    constructor() ERC20("EtherealToken", "MAG") {
+    constructor() ERC20("Mystic Token", "MYS") {
         tokenPrice = 0.001 ether;
         maxSupply = 1000000000000000000000;
     }
@@ -24,20 +24,17 @@ contract EtherealToken is ERC20, Ownable{
         require(totalSupply() + 1 <= maxSupply, "Sorry!! No more tokens");
         require(tokenRecord[msg.sender] == false, "You already got a token!!");
         require(msg.value == tokenPrice, "Your wallet doesn't consist of the valid amount for this token");
+        payable(owner()).transfer(address(this).balance);
         tokenRecord[msg.sender] = true;
         _mint(msg.sender, 1000000000000000000);
     }
 
     function setMaxSupply(uint _maxSupply) public onlyOwner{
-        maxSupply = _maxSupply;
+        maxSupply = _maxSupply * (10 ** decimals());
     }
 
     function setTokenPrice(uint _tokenPrice) public onlyOwner{
-        tokenPrice = _tokenPrice;
-    }
-
-    function withDraw() public onlyOwner{
-        payable(owner()).transfer(address(this).balance);
+        tokenPrice = _tokenPrice * (10 ** 9);
     }
 
     function returnState() public view returns(uint _maxSupply, uint _totalSupply, uint _tokenPrice){
