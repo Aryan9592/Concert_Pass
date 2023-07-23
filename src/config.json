@@ -2,5 +2,7 @@
     "contractAddress": "0x98a3282221FaCcBdDa039985f4cBA931768d79ec",
     "tokenSymbol": "MYS",
     "tokenDecimals": 18,
-    "tokenImage": "https://image.lexica.art/full_jpg/ca0e04bf-8015-4128-9fb3-d7c4a254ae33"
+    "tokenImage": "https://image.lexica.art/full_jpg/ca0e04bf-8015-4128-9fb3-d7c4a254ae33",
+    "owner": "0xaA6469C6104a929c039dD74Ff468E0Ff9Fe7A150",
+    "chainId": "0xaa36a7"
 }

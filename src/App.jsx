@@ -1,35 +1,42 @@
+// Importing Components
 import Header from './components/Header';
+import Main from './components/Main';
+import Owner from './components/Owner';
+
+// Importing Various Libraries
 import {useState, useEffect} from 'react'
 import { ethers } from 'ethers';
 import { message } from "antd";
 import { formatBalance, formatDetails } from './utils/info';
 import detectEthereumProvider from '@metamask/detect-provider';
-import Main from './components/Main';
-import Owner from './components/Owner';
+
+// Importing Additions Sets
 import ABI from "./abis/Contract_Abi.json"
 import Config from "./config.json"
 
 function App() {
+
+  const [hasProvider, setHasProvider] = useState(null)
   const [provider, setProvider] = useState(null)
 
   const [messageApi, contextHolder] = message.useMessage()
   const [contract, setContract] = useState(null)
 
-  const [hasProvider, setHasProvider] = useState(null)
   const initialState = { accounts: [], balance: "", chainId: "" }
+  const [wallet, setWallet] = useState(initialState)
 
-  // blockchain data
+  // Storing Smart contracts data to localStorage for ease
   const storage = JSON.parse(localStorage.getItem("items"))
   const [details, setDetails] = useState(() => storage || [])
-  // console.log(details)
 
-  const [wallet, setWallet] = useState(initialState)
 
   const error_key = "error"
   const contractAddress = Config.contractAddress
 
   // This useEffect is for handling metamask accounts thing
   useEffect(() => {
+
+    // For refreshing the accounts after every reload
     const refreshAccounts = (accounts) => {
       if (accounts.length > 0){
         updateWallet(accounts)
@@ -38,9 +45,9 @@ function App() {
       }
     }
 
+    // Refreshes Chain
     const refreshChain = (chainId) => {
       setWallet((wallet) => ({...wallet, chainId}))
-      
     }
 
     const getProvider = async () => {
@@ -104,7 +111,6 @@ function App() {
             formatBalance(detail[2])
         ]
         localStorage.setItem("items", JSON.stringify(newDetails))
-        console.log(`New Details: ${newDetails}`)
         setDetails(newDetails)
       }
     } 
@@ -125,9 +131,29 @@ function App() {
     <>
       {contextHolder}
       <div className="App">
-        <Header wallet={wallet} updateWallet={updateWallet} showError={showError} loadData={loadData}/>  
-        {wallet.accounts.length > 0 && <Main contract={contract} details={details} loadData={loadData} showError={showError} checkToken={checkToken}/>}  
-        <Owner contract={contract} loadData={loadData}/>
+        <Header 
+          wallet={wallet} 
+          updateWallet={updateWallet} 
+          showError={showError} 
+          loadData={loadData}
+        />  
+        {
+          wallet.accounts.length > 0 && 
+          <Main 
+            wallet={wallet}
+            contract={contract} 
+            details={details} 
+            loadData={loadData} 
+            checkToken={checkToken}
+          />
+        }  
+        {
+          wallet.accounts[0] === Config.owner && 
+          <Owner 
+            contract={contract} 
+            loadData={loadData}
+          />
+        }
       </div>
     </>
   );
