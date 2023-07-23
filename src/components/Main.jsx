@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
-// import { formatDetails, formatBalance } from "../utils/info";
 import Config from "../config.json"
 import { message } from "antd";
 const { ethers } = require("ethers")
 
 export default function Main({wallet, contract, details, loadData, checkToken}){
+    // UseStates
     const [messageApi, contextHolder] = message.useMessage()
     const [isMinting, setIsMinting] = useState(null)
     const [error, setError] = useState(false)
     const [isTestNet, setIsTestNet] = useState(false)
 
+    // Key items
     const tokenValue = ethers.parseEther('0.001')
     const tokenAddress = Config.contractAddress
     const tokenSymbol = Config.tokenSymbol
@@ -19,22 +20,24 @@ export default function Main({wallet, contract, details, loadData, checkToken}){
     const test_key = "testnet"
 
     
+    // Function for minting the token
     const MintToken = async (event) => {
         event.preventDefault()
         try {
             const mint = await contract.mint({value: tokenValue})
-            setIsMinting(true)
+            setIsMinting(true) // This do shows a loading message 'Minting"
             await mint.wait()
-            setIsMinting(false)
-            loadData()
-            addToken()
+            setIsMinting(false) // This do shows a success message 'Token Minted'
+            loadData() // Loads the blockchain token related data
+            addToken() // Adds token into the user wallet
         } catch (error) {
             setError(true)
             console.log(error)
-            checkToken()
+            checkToken() // checks whether the user already had that token or not
         }
     }
 
+    // Function for adding the token in user's wallet
     const addToken = async () => {
         try {
         // wasAdded is a boolean. Like any RPC method, an error can be thrown.
@@ -61,6 +64,7 @@ export default function Main({wallet, contract, details, loadData, checkToken}){
         }
     }
 
+    // It is responsible for displaying the floating messages
     useEffect(() => {
         const showMessage = () => {
             if(isMinting){
@@ -88,7 +92,7 @@ export default function Main({wallet, contract, details, loadData, checkToken}){
         }
     }, [isMinting])
 
-
+    // This function is responsible for displaying the Chain Related message
     const showInfo = (msg) => {
         if (msg) {
             messageApi.open({
@@ -107,6 +111,7 @@ export default function Main({wallet, contract, details, loadData, checkToken}){
         }
     }
     
+    // This is responsible for displaying the Chain Related message
     useEffect(() => {
         const checkChain = () => {
             console.log(isTestNet)

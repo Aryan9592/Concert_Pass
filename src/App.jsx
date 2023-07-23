@@ -50,6 +50,7 @@ function App() {
       setWallet((wallet) => ({...wallet, chainId}))
     }
 
+    // Getting Provider and refreshing chain, accounts on each reload
     const getProvider = async () => {
       const provider = await detectEthereumProvider({silent: true})
       setHasProvider(Boolean(provider))
@@ -67,16 +68,21 @@ function App() {
     
     getProvider() 
     return () => {
+      // clean up code
       window.ethereum?.removeListener('accountsChanged', refreshAccounts)
       window.ethereum?.removeListener("chainChanged", refreshChain)
     }
   }, [])
 
+  // Updating the Wallet
   const updateWallet = async (accounts) => {
+    // Getting the balance
     const balance = formatBalance(await window.ethereum.request({
       method: "eth_getBalance",
       params: [accounts[0], "latest"]
     }))
+
+    // Getting the chainID
     const chainId = await window.ethereum.request({
       method: "eth_chainId"
     })
@@ -91,6 +97,7 @@ function App() {
     setContract(contract)
   }
 
+  // Function for displaying error messages
   const showError = (errorMsg) => {
     messageApi.open({
       error_key,
@@ -100,6 +107,7 @@ function App() {
     })
   }
   
+  // This function is used to fetch details of the Contract like totalSupply, Maxsupply and price of the token
   const loadData = async () => {
     try{
       if (provider){
@@ -119,6 +127,7 @@ function App() {
     }
   }
 
+  // Function for checking whether the user has a token or not
   const checkToken = async () => {
     const read = new ethers.Contract(contractAddress, ABI, provider)
     const answer = await read.tokenRecord(wallet.accounts[0])

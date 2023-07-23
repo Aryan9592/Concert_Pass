@@ -3,11 +3,14 @@ import { message } from "antd";
 import Logo from "../images/logo.jpg"
 
 export default function Header({wallet, updateWallet, showError, loadData}){
+
+    // UseStates
     const [messageApi, contextHolder] = message.useMessage()
-    const key = 'updatable'
     const [isConnecting, setIsConnecting] = useState(null)
     const [error, setError] = useState(false)
+    const key = 'updatable'
     
+    // Function for connecting the Dapp to Metamask
     const connectHandler = async () => {
         setIsConnecting(true)
         await window.ethereum.request({
@@ -25,6 +28,7 @@ export default function Header({wallet, updateWallet, showError, loadData}){
         setIsConnecting(false)
     }
 
+    // It displays the wallet connection to user
     useEffect(() => {
         const showMessage = () => {
             if(isConnecting) {

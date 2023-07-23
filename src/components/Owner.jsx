@@ -1,12 +1,18 @@
 import React from "react";
 
+/* 
+    THIS COMPONENT IS ONLY ACCESSIBLE FOR THE OWNER OF THAT PARTICULAR CONTRACT
+*/
+
 export default function Owner({contract, loadData}){
 
+    // useStates
     const [formData, setFormData] = React.useState({
         supply: 0,
         price: 0
     })
 
+    // Handles the change effect 
     const handleChange = (event) => {
         const {name, value} = event.target
         setFormData(prevFormData => {
@@ -17,7 +23,8 @@ export default function Owner({contract, loadData}){
         })
     }
 
-    const handleSupplyChange = async (event) => {
+    // Sets the new `TokenSupply()` value
+    const handleSupplySubmit = async (event) => {
         event.preventDefault()
         const maxSupply = parseInt(formData.supply)
         if (maxSupply > 0){
@@ -34,7 +41,8 @@ export default function Owner({contract, loadData}){
         }
     }
 
-    const handlePriceChange = async (event) => {
+    // Sets new 'TokenPrice'
+    const handlePriceSubmit = async (event) => {
         event.preventDefault()
         const tokenPrice = parseInt(formData.price)
         if (tokenPrice > 0){
@@ -56,9 +64,9 @@ export default function Owner({contract, loadData}){
         <>
         <form>
             <input type="number" name="supply" id="" placeholder="In ether" onChange={handleChange} value={formData.supply}/>
-            <button onClick={handleSupplyChange}>Set Max Supply</button>
+            <button onClick={handleSupplySubmit}>Set Max Supply</button>
             <input type="number" name="price" id="" placeholder="In Gwei" onChange={handleChange} value={formData.price}/>
-            <button onClick={handlePriceChange}>Set Price</button>
+            <button onClick={handlePriceSubmit}>Set Price</button>
         </form>
         </>
     )
